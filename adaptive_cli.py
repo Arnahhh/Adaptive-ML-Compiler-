@@ -221,26 +221,78 @@ def available_ollama_model(endpoint: str, preferred: str) -> tuple[str | None, s
     return selected, f"Configured model '{preferred}' was not installed; automatically selected installed model '{selected}'."
 
 
+
 def ollama_transform(source: str, language: str, model: str, endpoint: str) -> str:
+    """Ask Ollama for a concrete, behavior-preserving source improvement."""
+
     prompt = (
-        "You are the code-improvement engine of an academic hybrid compiler.\n"
-        f"Language: {language}\n"
-        "Infer the most useful safe improvements from the code itself; do not ask the user to choose a goal. "
-        "Prioritize correctness and behavior preservation. Improve avoidable work, performance, memory use, readability, "
-        "or maintainability only when there is a concrete benefit. Preserve the program's observable behavior, I/O, "
-        "public API, entry point, and required class/function names. Do not add dependencies or invent APIs. "
-        "If no clearly beneficial change is safe, return the input unchanged. Return ONLY the complete source code, "
-        "with no Markdown fences or explanation.\n\nSOURCE START\n" + source + "\nSOURCE END"
+        "You are the optimization engine of an academic hybrid compiler.\n"
+        f"Language: {language}\n\n"
+
+        "TASK:\n"
+        "Analyze the source and return a genuinely improved version when a "
+        "safe, meaningful improvement exists. Do not merely reformat code.\n\n"
+
+        "LOOK FOR THESE OPPORTUNITIES:\n"
+        "1. Repeated calculations whose result can be reused.\n"
+        "2. Redundant conditions or unnecessary branches.\n"
+        "3. Inefficient loops or repeated work that can safely be avoided.\n"
+        "4. Unnecessarily complicated expressions that can be simplified.\n"
+        "5. Duplicated code that can be simplified without harming readability.\n"
+        "6. Clearer variable usage and control flow.\n"
+        "7. Simple constant expressions that can be evaluated at compile time.\n\n"
+
+        "STRICT SAFETY RULES:\n"
+        "- Preserve observable program behavior for valid inputs.\n"
+        "- Preserve input/output behavior, prompts, and output formatting.\n"
+        "- Preserve public function names, class names, signatures, and entry points.\n"
+        "- Preserve required imports and dependencies; do not invent APIs.\n"
+        "- Do not remove input operations, output operations, or error handling "
+        "just to make the code shorter.\n"
+        "- Do not change algorithms in ways that could alter edge cases, "
+        "integer overflow behavior, ordering, or floating-point results.\n"
+        "- Do not introduce concurrency or external dependencies.\n"
+        "- Keep the code compatible with the original language and its syntax.\n"
+        "- Prefer simple, explainable changes over clever or speculative changes.\n"
+        "- If no meaningful safe improvement exists, return the original source.\n\n"
+
+        "OUTPUT RULES:\n"
+        "- Return the complete source file, not a fragment.\n"
+        "- Return source code only: no Markdown fences, explanations, or headings.\n"
+        "- Do not omit unchanged functions or declarations.\n\n"
+
+        "SOURCE START\n"
+        + source
+        + "\nSOURCE END"
     )
-    payload = json.dumps({"model": model, "prompt": prompt, "stream": False, "options": {"temperature": 0}})
-    request = urllib.request.Request(endpoint.rstrip("/") + "/api/generate", data=payload.encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
+
+    payload = json.dumps({
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
+        "options": {"temperature": 0}
+    })
+
+    request = urllib.request.Request(
+        endpoint.rstrip("/") + "/api/generate",
+        data=payload.encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
     with urllib.request.urlopen(request, timeout=90) as response:
         data = json.loads(response.read().decode("utf-8"))
+
     candidate = extract_model_code(data.get("response", ""))
+
     if not candidate.strip():
         raise ValueError("Ollama returned an empty source candidate.")
+
     if len(candidate) > max(50000, len(source) * 4 + 5000):
-        raise ValueError("Ollama returned an implausibly large source candidate; it was rejected.")
+        raise ValueError(
+            "Ollama returned an implausibly large source candidate; it was rejected."
+        )
+
     return candidate
 
 
