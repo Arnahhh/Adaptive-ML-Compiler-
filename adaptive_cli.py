@@ -1,4 +1,4 @@
-"""Hybrid code-improvement pipeline shared by the terminal app and desktop UI."""
+﻿"""Hybrid code-improvement pipeline shared by the terminal app and desktop UI."""
 from __future__ import annotations
 
 import argparse
@@ -385,7 +385,7 @@ def run_existing_compiler(path: Path, native_validation_ok: bool | None = None, 
         )
         if native_validation_ok is True and subset_rejection:
             return (
-                "CORE FRONTEND LIMITATION — NOT A LANGUAGE SYNTAX ERROR.\n"
+                "CORE FRONTEND LIMITATION ΓÇö NOT A LANGUAGE SYNTAX ERROR.\n"
                 f"The installed language validator passed: {native_validation_message}\n"
                 "The embedded compiler frontend rejected this program because its implemented language subset "
                 "does not cover all valid constructs in this source. No reliable AST/IR/CFG/KNN result was "
@@ -404,11 +404,11 @@ def build_report(source_path: Path, output_path: Path, language: str, features: 
     diff = list(difflib.unified_diff(original.splitlines(), candidate.splitlines(), fromfile="original", tofile="improved", lineterm=""))
     changed_lines = sum(1 for line in diff if line.startswith(("+", "-")) and not line.startswith(("+++", "---")))
     lines = [
-        "ADAPTIVE ML COMPILER — AUTOMATIC IMPROVEMENT REPORT",
+        "ADAPTIVE ML COMPILER ΓÇö AUTOMATIC IMPROVEMENT REPORT",
         f"Input: {source_path}", f"Output: {output_path}", f"Language: {language}",
         f"AI status: {ai_note}", f"Input validation: {before_message}", f"Output validation: {after_message}",
         f"Changed source lines (approx): {changed_lines}",
-        f"Substantive source change: {'NO — only whitespace/newline normalization' if original.rstrip() == candidate.rstrip() else 'YES — inspect the source diff and test behavior'}",
+        f"Substantive source change: {'NO ΓÇö only whitespace/newline normalization' if original.rstrip() == candidate.rstrip() else 'YES ΓÇö inspect the source diff and test behavior'}",
         "Behavioral equivalence: NOT PROVEN. Run tests and compare outputs before relying on a changed program.",
         "Performance improvement: NOT BENCHMARKED. Compiler-valid code is not automatically faster.",
         "Static code profile:",
@@ -565,3 +565,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
