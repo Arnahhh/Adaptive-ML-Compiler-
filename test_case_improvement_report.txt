@@ -1,0 +1,41 @@
+ADAPTIVE ML COMPILER ΓÇö AUTOMATIC IMPROVEMENT REPORT
+Input: C:\Users\arnaa\Downloads\AdaptiveMLCompiler_DemoReady_Fixed\AdaptiveMLCompiler_DemoReady_Fixed\test_case.py
+Output: C:\Users\arnaa\Downloads\AdaptiveMLCompiler_DemoReady_Fixed\AdaptiveMLCompiler_DemoReady_Fixed\test_case_improved.py
+Language: Python
+AI status: AI disabled for this run; conservative deterministic improvements were used.
+Input validation: Python syntax check passed. This does not prove runtime correctness.
+Output validation: Python syntax check passed. This does not prove runtime correctness.
+Changed source lines (approx): 4
+Substantive source change: YES ΓÇö inspect the source diff and test behavior
+Behavioral equivalence: NOT PROVEN. Run tests and compare outputs before relying on a changed program.
+Performance improvement: NOT BENCHMARKED. Compiler-valid code is not automatically faster.
+Static code profile:
+- source lines: 3
+- lines of code: 3
+- lines of code approx: 3
+- loops approx: 0
+- branches approx: 0
+- arithmetic operators approx: 2
+- functions or methods approx: 0
+- python ast nodes: 23
+- python functions: 0
+- python classes: 0
+- python syntax: valid
+Changes:
+- Folded 2 isolated small-integer constant expression(s).
+
+SOURCE DIFF (first 160 lines):
+--- original
++++ improved
+@@ -1,3 +1,3 @@
+-a = 10 * 20
+-b = 5 + 5
++a = 200
++b = 10
+ print(a, b)
+
+Original compiler analysis:
+SKIPPED — LEGACY PYTHON FRONTEND IS A LIMITED SUBSET PARSER.
+Independent Python validation: Python syntax check passed. This does not prove runtime correctness.
+The original compiler core is not a general-purpose Python compiler. For Python, the app uses Python AST-based profiling, conservative source transformations, Python syntax validation, and the Python interpreter for execution. No AST/IR/CFG/KNN result is claimed for this Python input.
+This is a core-language-coverage limitation, not a Python syntax error.
